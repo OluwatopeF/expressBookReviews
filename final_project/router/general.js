@@ -4,6 +4,8 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+public_users.use(express.json());
+
 
 public_users.post("/register", (req,res) => {
    const { username, password } = req.body;
@@ -34,7 +36,12 @@ public_users.get('/',function (req, res) {
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
-  res.send(books[isbn]);
+  const book = books[isbn];
+  if(book){
+    res.json(book);
+  }else{
+    res.status(404).json({ message: "books not found"});
+  }
  });
   
 // Get book details based on author
