@@ -4,28 +4,24 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-// public_users.use(express.json());
 
 
 public_users.post("/register", (req,res) => {
    const { username, password } = req.body;
+   console.log(username);
+   const userExists = users.some(user => user.username === username);
 
-  // Check if username and password are provided
-  if (!username || !password) {
-    return res.status(400).json({ message: "Username and password are required" });
-  }
+   if (userExists) {
+     console.log("Username already exists"); // Log existing username
+     return res.status(400).json({ message: "Username already exists" });
+   }
 
-  // Check if the username already exists
-  const userExists = users.some(user => user.username === username);
-
-  if (userExists) {
-    return res.status(400).json({ message: "Username already exists" });
-  }
-
-  // Register the new user
-  users.push({ username, password });
-
-  return res.status(201).json({ message: "User registered successfully" });
+   if (!username || !password){
+    res.status(400).json({error: 'username & password are required'});
+   } else {
+    users.push({username, password});
+    return res.status(201).json({ message: "User registered successfully" });
+   }
 });
 
 // Get the book list available in the shop
@@ -64,11 +60,12 @@ public_users.get('/author/:author',function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
- const title = req.params.title.toLowerCase();
+ const title = req.params.title;
   const booksByTitle = [];
 
   Object.keys(books).forEach((isbn) => {
-    if (books[isbn].title.toLowerCase().includes(title)) {
+
+    if (books[isbn].title === title) {
       booksByTitle.push(books[isbn]);
     }
   });
