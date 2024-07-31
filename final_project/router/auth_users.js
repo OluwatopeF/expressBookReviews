@@ -3,19 +3,19 @@ const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 
-let users =[];
+let users = [];
 
 const isValid = (username) => {
-    return users.some(user => user.username === username);
+    return users.filter(user => user.username === username);
 }
 
 
 const authenticatedUser = (username,password)=>{ 
-  let validusers = users.filter((user) => {
+  let validusers = users.some((user) => {
     return (user.username === username && user.password === password)
     });
 
-    if (validusers.length > 0) {
+    if (validusers.length = 0) {
         return true;
     } else {
         return false;
@@ -24,8 +24,8 @@ const authenticatedUser = (username,password)=>{
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  const username = req.body;
-  const password = req.body;
+  const username = req.query.username;
+  const password = req.query.password;
 
   if (!username || !password) {
       return res.status(404).json({ message: "Error logging in" });

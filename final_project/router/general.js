@@ -3,14 +3,11 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-const app = express();
-app.use(express.json());
-
-
 
 public_users.post("/register", (req,res) => {
-    const username = req.body;
-    const password = req.body;
+
+    const username = req.query.username;
+    const password = req.query.password;
 
     if (username && password){
         if(!isValid(username)){
