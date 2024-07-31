@@ -3,29 +3,30 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const app = express();
+app.use(express.json());
 
 
 
 public_users.post("/register", (req,res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = req.body;
+    const password = req.body;
 
-   if (username && password){
-    if(!isValid(username)){
-        users.push({
-            "username":username,
-            "password":password
-        });
-      return res.status(200).json({message: "Registration complete"});
+    if (username && password){
+        if(!isValid(username)){
+            users.push({"username":username, "password":password});
+            return res.status(200).json({message: "Registration complete"});
+        } else{
+            return res.status(404).json({message: "username already exists"});
+        }
     } else{
-        return res.status(404).json({message: "username already exists"});
+        return res.status(404).json({message: "ERROR. cannot register user"});
     }
-}
-return res.status(404).json({message: "ERROR. cannot register user"});
 });
 
+
 // Get the book list available in the shop
-public_users.get('/',function (res) {
+public_users.get('/',function (req, res) {
   res.send(JSON.stringify(books, null, 3));
 });
 
